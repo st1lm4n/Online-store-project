@@ -1,14 +1,22 @@
+from catalog.models import Product
 from django.shortcuts import render
+from .models import Contact
 
-# Create your views here.
-
-from django.shortcuts import render
 
 def home(request):
-    return render(request, 'catalog/home.html')
+    latest_products = Product.objects.order_by('-created_at')[:5]
+    print("Последние 5 продуктов:", list(latest_products))
+    return render(request, 'catalog/home.html', {'products': latest_products})
+
 
 def contacts(request):
     if request.method == 'POST':
-        # Обработка данных формы
+        Contact.objects.create(
+            name=request.POST.get('name'),
+            phone=request.POST.get('phone'),
+            message=request.POST.get('message')
+        )
         return render(request, 'catalog/contacts.html', {'success': True})
     return render(request, 'catalog/contacts.html')
+
+
