@@ -1,12 +1,13 @@
-from catalog.models import Product
-from django.shortcuts import render
-from .models import Contact
+from django.shortcuts import render, get_object_or_404
+from .models import Contact, Product
+from django.shortcuts import redirect
+from .forms import ProductForm
+from django.core.paginator import Paginator
 
 
 def home(request):
-    latest_products = Product.objects.order_by('-created_at')[:5]
-    print("Последние 5 продуктов:", list(latest_products))
-    return render(request, 'catalog/home.html', {'products': latest_products})
+    products = Product.objects.all().order_by('-created_at')
+    return render(request, 'catalog/home.html', {'products': products})
 
 
 def contacts(request):
@@ -20,3 +21,25 @@ def contacts(request):
     return render(request, 'catalog/contacts.html')
 
 
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'catalog/product_detail.html', {'product': product})
+
+
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = ProductForm()
+    return render(request, 'catalog/add_product.html', {'form': form})
+
+
+def home(request):
+    product_list = Product.objects.all().order_by('-created_at')
+    paginator = Paginator(product_list, 6)  # 6 товаров на странице
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
+    return render(request, 'catalog/home.html', {'products': products})
