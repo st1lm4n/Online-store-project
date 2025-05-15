@@ -1,0 +1,22 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">{{ product.name }}</h1>
+</div>
+
+<div class="container">
+    <div class="row text-center">
+        <div class="col-12">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <img src="{{ product.image.url }}" class="img-fluid mb-3" alt="{{ product.name }}">
+                    <p class="lead">{{ product.description }}</p>
+                    <p class="h2">Цена: ${{ product.price }}</p>
+                    <a href="{% url 'home' %}" class="btn btn-lg btn-block btn-outline-primary">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
