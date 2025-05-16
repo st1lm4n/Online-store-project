@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
+from django.views.generic import DetailView
 from django.views.generic import ListView, TemplateView
 
 from blog.models import Post
@@ -17,6 +18,7 @@ class HomeView(ListView):
 class ContactsView(TemplateView):
     template_name = 'catalog/contacts.html'
 
+
 class PostListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
@@ -25,9 +27,10 @@ class PostListView(ListView):
         return Post.objects.filter(is_published=True)
 
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'catalog/product_detail.html', {'product': product})
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
 
 
 def add_product(request):
