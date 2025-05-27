@@ -1,29 +1,36 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Contact, Product
 from django.shortcuts import redirect
+from django.shortcuts import render
+from django.views.generic import DetailView
+from django.views.generic import ListView, TemplateView
+
+from blog.models import Post
 from .forms import ProductForm
-from django.core.paginator import Paginator
+from .models import Product
 
 
-def home(request):
-    products = Product.objects.all().order_by('-created_at')
-    return render(request, 'catalog/home.html', {'products': products})
+class HomeView(ListView):
+    model = Product
+    template_name = 'catalog/home.html'
+    context_object_name = 'products'
+    ordering = ['-created_at']
 
 
-def contacts(request):
-    if request.method == 'POST':
-        Contact.objects.create(
-            name=request.POST.get('name'),
-            phone=request.POST.get('phone'),
-            message=request.POST.get('message')
-        )
-        return render(request, 'catalog/contacts.html', {'success': True})
-    return render(request, 'catalog/contacts.html')
+class ContactsView(TemplateView):
+    template_name = 'catalog/contacts.html'
 
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'catalog/product_detail.html', {'product': product})
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+
+    def get_queryset(self):
+        return Post.objects.filter(is_published=True)
+
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
 
 
 def add_product(request):
@@ -35,11 +42,3 @@ def add_product(request):
     else:
         form = ProductForm()
     return render(request, 'catalog/add_product.html', {'form': form})
-
-
-def home(request):
-    product_list = Product.objects.all().order_by('-created_at')
-    paginator = Paginator(product_list, 6)  # 6 товаров на странице
-    page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)
-    return render(request, 'catalog/home.html', {'products': products})
