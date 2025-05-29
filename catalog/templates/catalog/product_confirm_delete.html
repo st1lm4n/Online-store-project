@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-danger mb-4">Удаление продукта</h2>
+    <p>Вы уверены, что хотите удалить "{{object.name}}" ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-block btn-outline-danger m-1">Удалить</button>
+        <a href="{% url 'home' %}" class="btn btn-block btn-outline-secondary m-1">Отмена</a>
+    </form>
+</div>
+{% endblock %}

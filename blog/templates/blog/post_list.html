@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <h1>Список статей</h1>
-    <a href="{% url 'post_create' %}" class="btn btn-primary mb-3">Создать статью</a>
+    <a href="{% url 'post_create' %}" class="btn btn-block btn-outline-primary mb-3">Создать статью</a>
     <div class="row">
         {% for post in posts %}
         <div class="col-md-4 mb-4">
@@ -13,9 +13,9 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
                     <p class="card-text">{{ post.content|truncatechars:100 }}</p>
-                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">Читать</a>
-                    <a href="{% url 'post_update' post.pk %}" class="btn btn-warning">Редактировать</a>
-                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Удалить</a>
+                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-block btn-outline-primary">Читать</a>
+                    <a href="{% url 'post_update' post.pk %}" class="btn btn-block btn-outline-secondary">Редактировать</a>
+                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-block btn-outline-danger">Удалить</a>
                 </div>
             </div>
         </div>
