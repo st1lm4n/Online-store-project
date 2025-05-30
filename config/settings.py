@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from django.conf.global_settings import LOGIN_URL, LOGIN_REDIRECT_URL
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -32,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "catalog",
     "blog.apps.BlogConfig",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -134,3 +137,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'skapincev.15@mail.ru'
+EMAIL_HOST_PASSWORD = os.getenv('MAIL_PASSWORD')
+
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
