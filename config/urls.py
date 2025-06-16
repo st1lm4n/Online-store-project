@@ -21,9 +21,10 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("catalog.urls")),
-    path("blog/", include("blog.urls")),
+    path('admin/', admin.site.urls),
+    path('', include('catalog.urls')),
+    path('log/', include('blog.urls')),
+    path('users/', include('users.urls')),
 ]
 
 if settings.DEBUG:
