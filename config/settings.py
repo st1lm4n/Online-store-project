@@ -149,3 +149,16 @@ EMAIL_HOST_PASSWORD = os.getenv('MAIL_PASSWORD')
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+CACHE_ENABLED = True
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # URL Redis-сервера
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "onlinestore",  # Префикс ключей
+    }
+}
