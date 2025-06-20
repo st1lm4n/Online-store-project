@@ -1,4 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -53,11 +54,16 @@ def add_product(request):
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
+
     login_url = '/users/login/'
     model = Product
     form_class = ProductForm
     template_name = "catalog/product_form.html"
     success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
@@ -67,9 +73,31 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "catalog/product_form.html"
     success_url = reverse_lazy("home")
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.owner != request.user:
+            raise PermissionDenied("Вы не являетесь владельцем этого продукта")
+        return super().dispatch(request, *args, **kwargs)
+
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/users/login/'
     model = Product
     template_name = "catalog/product_confirm_delete.html"
     success_url = reverse_lazy("home")
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.owner != request.user and not request.user.has_perm('products.delete_product'):
+            raise PermissionDenied("У вас нет прав для удаления этого продукта")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UnpublishProductView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'products.can_unpublish_product'
+    model = Product
+    fields = []
+
+    def form_valid(self, form):
+        form.instance.publish_status = 'draft'
+        return super().form_valid(form)
