@@ -14,7 +14,7 @@
                     {% endif %}
                     <p class="lead">{{ product.description }}</p>
                     <p class="h2">Цена: ${{ product.price }}</p>
-                    {% if user == product.owner or user.has_perm('products.delete_product') %}
+                    {% if user == product.owner or perms.products.delete_product %}
                     <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
                     {% endif %}
 
@@ -22,10 +22,10 @@
                     <a href="{% url 'product_edit' product.pk %}" class="btn btn-secondary">Редактировать</a>
                     {% endif %}
 
-                    {% if user.has_perm('products.can_unpublish_product') %}
+                    {% if perms.products.delete_product or perms.products.can_unpublish_product %}
                     <a href="{% url 'unpublish_product' product.pk %}" class="btn btn-warning">Отменить публикацию</a>
                     {% endif %}
-                    <a href="{% url 'home' %}" class="btn btn-lg btn-block btn-outline-primary">Назад</a>
+                    <a href="{% url 'home' %}" class="btn btn-block btn-primary">Назад</a>
                 </div>
             </div>
         </div>
