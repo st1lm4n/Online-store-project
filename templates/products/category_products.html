@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+<div class="products">
+    {% for product in products %}
+        {% include 'products/includes/product_card.html' %}
+    {% endfor %}
+</div>
+{% endblock %}

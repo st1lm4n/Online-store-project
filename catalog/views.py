@@ -2,6 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -12,9 +14,30 @@ from django.views.generic import (
 )
 
 from blog.models import Post
-
 from .forms import ProductForm
 from .models import Product
+from ..services import get_products_by_category
+
+
+@method_decorator(cache_page(60 * 15), name='dispatch')  # Кеш на 15 минут
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'products/product_detail.html'
+    context_object_name = 'product'
+
+
+class CategoryProductsView(ListView):
+    template_name = 'products/category_products.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        category_slug = self.kwargs['category_slug']
+        return get_products_by_category(category_slug)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.get(slug=self.kwargs['category_slug'])
+        return context
 
 
 class HomeView(ListView):
@@ -54,7 +77,6 @@ def add_product(request):
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
-
     login_url = '/users/login/'
     model = Product
     form_class = ProductForm
