@@ -27,7 +27,7 @@ urlpatterns = [
     path('', include('catalog.urls')),
     path('log/', include('blog.urls')),
     path('users/', include('users.urls')),
-    path('category/<slug:category_slug>/', CategoryProductsView.as_view(), name='category_products'),
+    path('category/<int:category_id>/', CategoryProductsView.as_view(), name='category_products'),
 ]
 
 if settings.DEBUG:

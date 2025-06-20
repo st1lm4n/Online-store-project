@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -16,7 +16,8 @@ from django.views.generic import (
 from blog.models import Post
 from .forms import ProductForm
 from .models import Product, Category
-from .services import get_products_by_category, get_cached_products
+from .services import get_products_by_category_id, get_cached_products
+from django.views.generic import ListView
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')  # Кеш на 15 минут
@@ -25,18 +26,22 @@ class ProductDetailView(DetailView):
     template_name = 'catalog/product_detail.html'
     context_object_name = 'product'
 
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'catalog/category_list.html'
+    context_object_name = 'categories'
 
 class CategoryProductsView(ListView):
     template_name = 'catalog/category_products.html'
     context_object_name = 'products'
 
     def get_queryset(self):
-        category_slug = self.kwargs['category_slug']
-        return get_products_by_category(category_slug)
+        category_id = self.kwargs['category_id']
+        return get_products_by_category_id(category_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.get(slug=self.kwargs['category_slug'])
+        context['category'] = get_object_or_404(Category, id=self.kwargs['category_id'])
         return context
 
 
