@@ -19,3 +19,6 @@ class ProductAdmin(admin.ModelAdmin):
 class ContactAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "phone")  # Поля для отображения в списке
     search_fields = ("name", "phone")  # Поля для поиска
+
+
+
